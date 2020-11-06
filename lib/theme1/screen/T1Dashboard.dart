@@ -197,11 +197,13 @@ class T1DashboardState extends State<T1Dashboard> {
                       FirebaseVisionImage visionImage =
                           FirebaseVisionImage.fromFile(pickedImage);
 
-                      final ImageLabeler cloudLabeler =
-                          FirebaseVision.instance.cloudImageLabeler();
+                      final ImageLabeler labeler =
+                          FirebaseVision.instance.imageLabeler(
+                        ImageLabelerOptions(confidenceThreshold: 0.75),
+                      );
 
                       final List<ImageLabel> cloudLabels =
-                          await cloudLabeler.processImage(visionImage);
+                          await labeler.processImage(visionImage);
 
                       for (ImageLabel label in cloudLabels) {
                         final double confidence = label.confidence;
@@ -211,8 +213,8 @@ class T1DashboardState extends State<T1Dashboard> {
                           print(text);
                         });
                       }
+                      labeler.close();
 
-                      cloudLabeler.close();
                       Future.delayed(const Duration(milliseconds: 500), () {
                         showDialog(
                           context: context,
