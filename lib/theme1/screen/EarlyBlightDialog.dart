@@ -1,14 +1,12 @@
-import 'package:disease_detector/theme1/screen/LateBlightDialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:disease_detector/theme1/screen/T1Profile.dart';
 import 'package:disease_detector/theme1/utils/T1Colors.dart';
 import 'package:disease_detector/theme1/utils/T1Constant.dart';
 import 'package:disease_detector/theme1/utils/T1Images.dart';
+import 'package:disease_detector/theme1/utils/T1Strings.dart';
 import 'package:disease_detector/theme1/utils/T1Widget.dart';
 
-import 'EarlyBlightDialog.dart';
-import 'LeafSpotDialog.dart';
 import 'T1Dashboard.dart';
 
 class T1Dialog extends StatelessWidget {
@@ -19,19 +17,19 @@ class T1Dialog extends StatelessWidget {
     Future.delayed(const Duration(milliseconds: 1000), () {
       showDialog(
         context: context,
-        builder: (BuildContext context) => CustomDialog("", "", "", ""),
+        builder: (BuildContext context) => CustomDialog3("", "", "", ""),
       );
     });
     return T1Profile();
   }
 }
 
-class CustomDialog extends StatelessWidget {
+class CustomDialog3 extends StatelessWidget {
   var diseaseF;
   var confidenceF;
   var diseaseF2;
   var confidenceF2;
-  CustomDialog(var disease, var confidence, var disease2, var confidence2) {
+  CustomDialog3(var disease, var confidence, var disease2, var confidence2) {
     this.diseaseF = disease;
     this.confidenceF = confidence;
     this.diseaseF2 = disease2;
@@ -58,25 +56,6 @@ dialogContent(BuildContext context, var disease, var confidence, var disease2,
   var confidenceF = confidence;
   var diseaseF2 = disease2;
   var confidenceF2 = confidence2;
-  void selectDialog(diseaseSelect) {
-    if (diseaseSelect == "Tomato Late Blight") {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CustomDialog2("", "", "", "")));
-    } else if (diseaseSelect == "Tomato Early Blight") {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CustomDialog3("", "", "", "")));
-    } else {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => CustomDialog4("", "", "", "")));
-    }
-  }
-
   return Container(
       decoration: new BoxDecoration(
         color: Colors.white,
@@ -103,48 +82,27 @@ dialogContent(BuildContext context, var disease, var confidence, var disease2,
                 alignment: Alignment.centerRight,
                 child: Icon(Icons.close, color: t1TextColorPrimary)),
           ),
-          text("Detection Successful!",
+          text("Tomato Early Blight",
               textColor: Colors.green,
               fontFamily: fontBold,
               fontSize: textSizeLarge),
           SizedBox(height: 24),
-          Image.asset(
+          /*Image.asset(
             t1_ic_dialog,
             color: Colors.green,
             width: 95,
             height: 95,
-          ),
+          ),*/
           SizedBox(height: 24),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16),
-            child: Column(
-              children: [
-                GestureDetector(
-                  child: text("Disease: $diseaseF",
-                      fontSize: textSizeMedium, maxLine: 1, isCentered: true),
-                  onTap: () {
-                    selectDialog(diseaseF);
-                  },
-                ),
-                text("Accuracy: $confidenceF" + "%",
-                    fontSize: textSizeMedium, maxLine: 1, isCentered: true),
-              ],
-            ),
-          ),
-          SizedBox(height: 14),
           Padding(
               padding: const EdgeInsets.only(left: 16, right: 16),
               child: Column(
                 children: [
-                  GestureDetector(
-                    child: text("Disease: $diseaseF2",
-                        fontSize: textSizeMedium, maxLine: 1, isCentered: true),
-                    onTap: () {
-                      selectDialog(diseaseF2);
-                    },
-                  ),
-                  text("Accuracy: $confidenceF2" + "%",
-                      fontSize: textSizeMedium, maxLine: 1, isCentered: true),
+                  text(
+                      "Early blight is a common tomato disease caused by the fungus Alternaria solani. It can affect almost all parts of the tomato plants, including the leaves, stems, and fruits. The plants may not die, but they will be weakened and will set fewer tomatoes than normal. Early blight generally attacks older plants, but it can also occur on seedlings.",
+                      fontSize: textSizeMedium,
+                      maxLine: 20,
+                      isCentered: false),
                 ],
               )),
           SizedBox(height: 30),
