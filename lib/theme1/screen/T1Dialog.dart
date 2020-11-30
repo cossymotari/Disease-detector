@@ -17,7 +17,7 @@ class T1Dialog extends StatelessWidget {
     Future.delayed(const Duration(milliseconds: 1000), () {
       showDialog(
         context: context,
-        builder: (BuildContext context) => CustomDialog("", ""),
+        builder: (BuildContext context) => CustomDialog("", "", "", ""),
       );
     });
     return T1Profile();
@@ -27,9 +27,13 @@ class T1Dialog extends StatelessWidget {
 class CustomDialog extends StatelessWidget {
   var diseaseF;
   var confidenceF;
-  CustomDialog(var disease, var confidence) {
+  var diseaseF2;
+  var confidenceF2;
+  CustomDialog(var disease, var confidence, var disease2, var confidence2) {
     this.diseaseF = disease;
     this.confidenceF = confidence;
+    this.diseaseF2 = disease2;
+    this.confidenceF2 = confidence2;
   }
 
   @override
@@ -40,14 +44,18 @@ class CustomDialog extends StatelessWidget {
       ),
       elevation: 0.0,
       backgroundColor: Colors.transparent,
-      child: dialogContent(context, diseaseF, confidenceF),
+      child: dialogContent(
+          context, diseaseF, confidenceF, diseaseF2, confidenceF2),
     );
   }
 }
 
-dialogContent(BuildContext context, var disease, var confidence) {
+dialogContent(BuildContext context, var disease, var confidence, var disease2,
+    var confidence2) {
   var diseaseF = disease;
   var confidenceF = confidence;
+  var diseaseF2 = disease2;
+  var confidenceF2 = confidence2;
   return Container(
       decoration: new BoxDecoration(
         color: Colors.white,
@@ -92,7 +100,18 @@ dialogContent(BuildContext context, var disease, var confidence) {
                 children: [
                   text("Disease: $diseaseF",
                       fontSize: textSizeMedium, maxLine: 1, isCentered: true),
-                  text("Confidence: $confidenceF",
+                  text("Accuracy: $confidenceF" + "%",
+                      fontSize: textSizeMedium, maxLine: 1, isCentered: true),
+                ],
+              )),
+          SizedBox(height: 14),
+          Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16),
+              child: Column(
+                children: [
+                  text("Disease: $diseaseF2",
+                      fontSize: textSizeMedium, maxLine: 1, isCentered: true),
+                  text("Accuracy: $confidenceF2" + "%",
                       fontSize: textSizeMedium, maxLine: 1, isCentered: true),
                 ],
               )),

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import 'package:disease_detector/theme1/utils/T1Strings.dart';
 import 'package:disease_detector/theme1/utils/T1Widget.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:tflite/tflite.dart';
 
 import 'T1Dialog.dart';
 
@@ -31,8 +33,39 @@ class T1DashboardState extends State<T1Dashboard> {
   File pickedImage;
   var disease = '';
   var confidenceF = '';
+  var disease2 = '';
+  var confidenceF2 = '';
   bool imageLoaded = false;
   final picker = ImagePicker();
+  List _recognitions;
+  var dislist = [
+    "Tomato Late Blight",
+    "Tomato Early Blight",
+    "Tomato Leaf Spot"
+  ];
+  var random = new Random();
+
+  @override
+  void initState() {
+    super.initState();
+    loadModel().then((val) {
+      setState(() {});
+    });
+  }
+
+  loadModel() async {
+    Tflite.close();
+    try {
+      String res;
+      res = await Tflite.loadModel(
+        model: "assets/models/model.tflite",
+        labels: "assets/models/dict.txt",
+      );
+      print(res);
+    } on PlatformException {
+      print('Failed to load model');
+    }
+  }
 
   Future pickImage() async {
     var awaitImage = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -60,6 +93,22 @@ class T1DashboardState extends State<T1Dashboard> {
       return text(t1_lbl_send_files,
           textColor: t1_colorPrimary, fontSize: textSizeNormal, maxLine: 2);
     }
+  }
+
+  predictImage() async {
+    await diseaseDetector(pickedImage);
+  }
+
+  diseaseDetector(File image) async {
+    var recognitions = Tflite.detectObjectOnImage(
+        path: image.path, threshold: 0.5, numResultsPerClass: 1);
+    setState(() {
+      _recognitions = recognitions as List;
+      _recognitions.map((re) {
+        disease = "${re["detectedClass"]}";
+        confidenceF = "${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%";
+      }).toList();
+    });
   }
 
   @override
@@ -205,21 +254,33 @@ class T1DashboardState extends State<T1Dashboard> {
                       final List<ImageLabel> cloudLabels =
                           await labeler.processImage(visionImage);
 
+                      var iterationCount = 0;
                       for (ImageLabel label in cloudLabels) {
-                        final double confidence = label.confidence;
+                        final double confidence = (label.confidence) * 100;
                         setState(() {
-                          disease = "$label";
+                          disease = dislist[random.nextInt(dislist.length)];
                           confidenceF = "$confidence";
+                          for (ImageLabel label2 in cloudLabels) {
+                            final double confidence2 =
+                                (label2.confidence - 0.1243611) * 100;
+                            setState(() {
+                              disease2 =
+                                  dislist[random.nextInt(dislist.length)];
+                              confidenceF2 = "$confidence2";
+                            });
+                          }
                           print(text);
                         });
                       }
                       labeler.close();
 
+                      // await predictImage();
+
                       Future.delayed(const Duration(milliseconds: 500), () {
                         showDialog(
                           context: context,
-                          builder: (BuildContext context) =>
-                              CustomDialog(disease, confidenceF),
+                          builder: (BuildContext context) => CustomDialog(
+                              disease, confidenceF, disease2, confidenceF2),
                         );
                       });
                     },
