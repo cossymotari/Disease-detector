@@ -248,7 +248,7 @@ class T1DashboardState extends State<T1Dashboard> {
 
                       final ImageLabeler labeler =
                           FirebaseVision.instance.imageLabeler(
-                        ImageLabelerOptions(confidenceThreshold: 0.75),
+                        ImageLabelerOptions(confidenceThreshold: 0.25),
                       );
 
                       final List<ImageLabel> cloudLabels =
