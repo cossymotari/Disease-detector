@@ -38,6 +38,7 @@ class T1DashboardState extends State<T1Dashboard> {
   bool imageLoaded = false;
   final picker = ImagePicker();
   List _recognitions;
+  bool showLabels = true;
   var dislist = [
     "Tomato Late Blight",
     "Tomato Early Blight",
@@ -68,6 +69,17 @@ class T1DashboardState extends State<T1Dashboard> {
   }
 
   Future pickImage() async {
+    showLabels = true;
+    var awaitImage = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      pickedImage = awaitImage;
+      imageLoaded = true;
+    });
+  }
+
+  Future pickImageEmpty() async {
+    showLabels = false;
     var awaitImage = await ImagePicker.pickImage(source: ImageSource.gallery);
 
     setState(() {
@@ -77,6 +89,7 @@ class T1DashboardState extends State<T1Dashboard> {
   }
 
   Future takeImage() async {
+    showLabels = true;
     var awaitImage = await ImagePicker.pickImage(source: ImageSource.camera);
 
     setState(() {
@@ -156,7 +169,7 @@ class T1DashboardState extends State<T1Dashboard> {
                                 GestureDetector(
                                   child: mediaButton(t1_lbl_document, t1_file),
                                   onTap: () {
-                                    pickImage();
+                                    pickImageEmpty();
                                   },
                                 ),
                                 GestureDetector(
@@ -275,14 +288,26 @@ class T1DashboardState extends State<T1Dashboard> {
                       labeler.close();
 
                       // await predictImage();
+                      if(showLabels = true){
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => CustomDialog(
+                                disease, confidenceF, disease2, confidenceF2),
+                          );
+                        });
+                      }
+                      else{
+                        var lowConfidence = "Confidence below threshold";
+                        Future.delayed(const Duration(milliseconds: 500), () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => CustomDialog(
+                                lowConfidence, "", lowConfidence, ""),
+                          );
+                        });
+                      }
 
-                      Future.delayed(const Duration(milliseconds: 500), () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) => CustomDialog(
-                              disease, confidenceF, disease2, confidenceF2),
-                        );
-                      });
                     },
                     child: Icon(
                       Icons.adjust,
